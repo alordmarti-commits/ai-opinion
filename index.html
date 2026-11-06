@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Opinion · Formulario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap">
+<style>
+:root{color-scheme:light;--outer:#655DF0;--screen:#FFFEFC;--green:#19C58A;--yellow:#F4BA40;--text:#293D5B;--muted:#A7A8B3;--border:#E5E2DF;--track:#F4F2EE;--mint:#E9F8F5;--error:#E5484D;box-sizing:border-box}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0}
+body{background:var(--outer);font-family:'Outfit','Poppins',system-ui,sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+.phone{max-width:430px;height:100%;margin:0 auto;background:var(--screen);display:flex;flex-direction:column;position:relative}
+@media (min-width:600px){.phone{height:min(100%,900px);margin-top:max(0px,calc((100% - 900px)/2))}}
+.screen{display:none;flex:1;min-height:0;flex-direction:column}
+.screen.on{display:flex}
+header{display:flex;align-items:center;gap:24px;padding:calc(20px + env(safe-area-inset-top,0px)) 24px 8px}
+.back,.close{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border);background:var(--screen);display:grid;place-items:center;color:var(--text);flex:none;padding:0;cursor:pointer}
+.back[disabled]{opacity:.35;cursor:default}
+.track{flex:1;height:7px;border-radius:99px;background:var(--track)}
+.fill{height:100%;border-radius:99px;background:var(--yellow);transition:width .3s}
+main{flex:1;overflow-y:auto;padding:12px 24px 44px;scroll-behavior:smooth;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 16px,#000 calc(100% - 32px),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 16px,#000 calc(100% - 32px),transparent 100%)}
+h1{font-size:26px;line-height:1.2;font-weight:500;margin:12px 0 10px;letter-spacing:-.1px}
+.sub{font-size:15px;margin:0 0 24px}
+.field{margin-bottom:26px}
+.label{display:block;font-size:16px;font-weight:500;margin-bottom:12px;line-height:1.3}
+.opt-tag{font-weight:400;color:var(--muted);font-size:14px;margin-left:6px}
+input[type=text],input[type=number]{width:100%;height:52px;border-radius:99px;border:2px solid var(--border);background:var(--screen);padding:0 22px;font:500 16px 'Outfit','Poppins',sans-serif;color:var(--text);outline:none;-moz-appearance:textfield}
+input::placeholder{color:var(--muted);font-weight:400}
+input:focus{border-color:var(--yellow)}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}
+.group{display:flex;flex-direction:column;gap:10px}
+.group.grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.group.grid2{display:grid;grid-template-columns:repeat(2,1fr)}
+.opt{position:relative;height:64px;border-radius:99px;border:2px solid var(--border);background:var(--screen);color:var(--muted);font:300 16px 'Outfit','Poppins',sans-serif;display:flex;align-items:center;justify-content:center;padding:0 40px;cursor:pointer;transition:border-color .15s,color .15s}
+.grid .opt,.grid2 .opt{padding:0 12px;height:52px}
+.opt[aria-checked=true]{border-color:var(--yellow);color:var(--text);font-weight:600}
+.opt .chk{position:absolute;right:24px;top:50%;transform:translateY(-50%);display:none;color:var(--yellow)}
+.grid .opt .chk,.grid2 .opt .chk{display:none!important}
+.opt[aria-checked=true] .chk{display:block}
+.opt:focus-visible,.back:focus-visible,.close:focus-visible,.next:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.err{color:var(--error);font-size:14px;margin:8px 0 0 6px;display:none}
+.field.bad .err{display:block}
+.field.bad input,.field.bad .opt{border-color:#F3B6B8}
+.field.bad .opt[aria-checked=true]{border-color:var(--yellow)}
+footer{padding:16px 24px calc(20px + env(safe-area-inset-bottom,0px));background:var(--screen)}
+.next{width:100%;height:44px;border:0;border-radius:99px;background:var(--green);color:#fff;font:500 16px 'Outfit','Poppins',sans-serif;cursor:pointer}
+.next[disabled]{opacity:.6;cursor:wait}
+.msg{font-size:14px;color:var(--error);text-align:center;margin:0 0 10px;display:none}
+/* pantalla 3 */
+.hero{position:relative;background:var(--mint);flex:none}
+.hero svg{display:block;width:100%;height:auto}
+.close{position:absolute;top:calc(20px + env(safe-area-inset-top,0px));right:24px}
+.rows{list-style:none;margin:24px 0 0;padding:0;display:flex;flex-direction:column;gap:22px}
+.rows li{display:flex;gap:16px;align-items:flex-start;font-size:16px;line-height:1.35;color:var(--muted)}
+.ico{width:46px;height:46px;border-radius:50%;background:#FDEBE7;display:grid;place-items:center;flex:none}
+.rows span.t{padding-top:2px}
+</style>
+</head>
+<body>
+<div class="phone">
+
+<!-- PANTALLA 1 -->
+<section class="screen on" id="s1">
+  <header>
+    <button class="back" disabled aria-label="Regresar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="track"><div class="fill" style="width:33.3%"></div></div>
+  </header>
+  <main>
+    <h1>Cuéntanos sobre ti y tu opinión de la IA</h1>
+    <p class="sub">Usa un alias, nunca tu nombre real</p>
+    <div class="field" data-f="alias"><label class="label" for="alias">Alias o nombre ficticio</label>
+      <input id="alias" type="text" maxlength="40" placeholder="Por ejemplo: Lobo Azul" autocomplete="off"><p class="err">Escribe un alias (máximo 40 caracteres).</p></div>
+    <div class="field" data-f="age"><label class="label" for="age">Edad</label>
+      <input id="age" type="number" inputmode="numeric" min="12" max="18" placeholder="Entre 12 y 18"><p class="err">La edad debe ser un número entre 12 y 18.</p></div>
+    <div class="field" data-f="gender"><span class="label">Género<span class="opt-tag">opcional</span></span><div class="group grid2" role="radiogroup" aria-label="Género"></div></div>
+    <div class="field" data-f="grade"><span class="label">Grado escolar</span><div class="group grid" role="radiogroup" aria-label="Grado escolar"></div><p class="err">Elige tu grado.</p></div>
+    <div class="field" data-f="main_interest"><span class="label">Interés principal</span><div class="group" role="radiogroup" aria-label="Interés principal"></div><p class="err">Elige un interés.</p></div>
+    <div class="field" data-f="ai_opinion"><span class="label">¿Cuál es tu opinión sobre la IA?</span><div class="group" role="radiogroup" aria-label="Opinión sobre la IA"></div><p class="err">Elige una opinión.</p></div>
+  </main>
+  <footer><button class="next" id="to2">Continuar</button></footer>
+</section>
+
+<!-- PANTALLA 2 -->
+<section class="screen" id="s2">
+  <header>
+    <button class="back" id="back2" aria-label="Regresar"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="track"><div class="fill" style="width:66.6%"></div></div>
+  </header>
+  <main>
+    <h1>¿Qué sabes y qué piensas de la IA?</h1>
+    <p class="sub">Responde las seis preguntas</p>
+    <div class="field" data-f="ai_knowledge"><span class="label">¿Qué tanto conoces sobre la inteligencia artificial?</span><div class="group" role="radiogroup"></div><p class="err">Elige una respuesta.</p></div>
+    <div class="field" data-f="ai_usage"><span class="label">¿Has utilizado alguna herramienta de inteligencia artificial?</span><div class="group" role="radiogroup"></div><p class="err">Elige una respuesta.</p></div>
+    <div class="field" data-f="job_replacement"><span class="label">¿Crees que la IA podría reemplazar más del 60&nbsp;% de algunos trabajos en el futuro?</span><div class="group" role="radiogroup"></div><p class="err">Elige una respuesta.</p></div>
+    <div class="field" data-f="learning_help"><span class="label">¿Consideras que la IA facilita el aprendizaje?</span><div class="group" role="radiogroup"></div><p class="err">Elige una respuesta.</p></div>
+    <div class="field" data-f="society_risk"><span class="label">¿Crees que la IA representa un riesgo para la sociedad?</span><div class="group" role="radiogroup"></div><p class="err">Elige una respuesta.</p></div>
+    <div class="field" data-f="schools_should_teach"><span class="label">¿Deberían las escuelas enseñar a utilizar la IA?</span><div class="group" role="radiogroup"></div><p class="err">Elige una respuesta.</p></div>
+  </main>
+  <footer><p class="msg" id="msg"></p><button class="next" id="send">Enviar respuestas</button></footer>
+</section>
+
+<!-- PANTALLA 3 -->
+<section class="screen" id="s3">
+  <div class="hero">
+    <svg viewBox="0 0 430 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dos amigos abrazados">
+      <path d="M0 40C60 10 110 60 170 30S300 0 430 40V0H0z" fill="#D5F1EA"/>
+      <path d="M-10 190C30 120 80 110 120 150V330H-10z" fill="#D5F1EA"/>
+      <path d="M95 330C90 270 110 215 175 200L255 200 255 330z" fill="#2FCB91"/>
+      <path d="M215 330C205 250 225 200 290 190 340 183 380 200 395 330z" fill="#FF6A3D"/>
+      <path d="M70 290C110 270 190 250 235 250L240 290C190 300 120 320 90 320z" fill="#8B4A2B"/>
+      <path d="M338 205 360 160 392 170 370 215z" fill="#8B4A2B"/>
+      <rect x="168" y="175" width="40" height="45" rx="18" fill="#5C2E17"/>
+      <circle cx="187" cy="140" r="52" fill="#4A2412"/>
+      <ellipse cx="187" cy="150" rx="38" ry="42" fill="#8B4A2B"/>
+      <path d="M150 122Q187 98 224 122V132Q187 112 150 132z" fill="#F4BA40"/>
+      <path d="M168 150q8-7 16 0M192 150q8-7 16 0" stroke="#3A1B0C" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M176 172q11 9 22 0" stroke="#3A1B0C" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <rect x="292" y="168" width="34" height="40" rx="16" fill="#F7C5B5"/>
+      <path d="M268 112C262 70 330 52 345 100 352 130 335 150 320 150L280 150z" fill="#1F3159"/>
+      <ellipse cx="308" cy="128" rx="34" ry="38" fill="#F9D3C4"/>
+      <path d="M272 112Q310 82 346 112Q310 100 272 112z" fill="#1F3159"/>
+      <circle cx="294" cy="128" r="13" fill="#fff" fill-opacity=".5" stroke="#293D5B" stroke-width="3"/>
+      <circle cx="326" cy="128" r="13" fill="#fff" fill-opacity=".5" stroke="#293D5B" stroke-width="3"/>
+      <path d="M307 128h6" stroke="#293D5B" stroke-width="3"/>
+      <path d="M296 148q12 9 24 0" stroke="#B5483B" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M0 290Q215 345 430 290V330H0z" fill="#FFFEFC"/>
+    </svg>
+    <button class="close" id="again" aria-label="Cerrar y responder de nuevo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <main>
+    <h1 id="thanks">¡Gracias!</h1>
+    <ul class="rows">
+      <li><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="#FF6A3D"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-4 3-6 1 1 1 2 2 2 0-3-1-5 1-8z"/></svg></span><span class="t">Tus respuestas se guardaron correctamente.</span></li>
+      <li><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="#FF6A3D"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 4-7 8-7s8 2 8 7z"/></svg></span><span class="t">Tu opinión ayuda a entender cómo ven la IA los estudiantes.</span></li>
+      <li><span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="#FF6A3D"><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z"/></svg></span><span class="t">Solo guardamos tu alias ficticio, nunca tu nombre real.</span></li>
+    </ul>
+  </main>
+  <footer><button class="next" id="again2">Enviar otra respuesta</button></footer>
+</section>
+</div>
+
+<script>
+/* Claves públicas (seguras para el frontend). La protección real son las políticas RLS. */
+const SUPABASE_URL = 'https://usdwbqmtpomusrgyrsph.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_ab8M0Mb_L0XUjyzZVgBSwg_QmHz_-Y1';
+
+const OPTIONS = {
+  gender:[['masculino','Masculino'],['femenino','Femenino'],['otro','Otro'],['prefiero_no_decir','Prefiero no decir']],
+  grade:[[7,'7.º'],[8,'8.º'],[9,'9.º'],[10,'10.º'],[11,'11.º'],[12,'12.º']],
+  main_interest:[['educacion','Educación'],['tecnologia','Tecnología'],['medicina','Medicina'],['entretenimiento','Entretenimiento'],['trabajo','Trabajo']],
+  ai_opinion:[['a_favor','A favor'],['en_contra','En contra'],['neutral','Neutral']],
+  ai_knowledge:[['mucho','Mucho'],['suficiente','Lo suficiente'],['poco','Poco'],['nada','Nada']],
+  ai_usage:[['frecuentemente','Sí, frecuentemente'],['algunas_veces','Sí, algunas veces'],['nunca','No, nunca']],
+  job_replacement:[['si','Sí'],['no','No'],['no_seguro','No estoy seguro']],
+  learning_help:[['si','Sí'],['no','No'],['depende','Depende de cómo se utilice']],
+  society_risk:[['si','Sí'],['no','No'],['algunos_aspectos','En algunos aspectos']],
+  schools_should_teach:[['si','Sí'],['no','No'],['no_seguro','No estoy seguro']]
+};
+const state = {alias:'',age:'',gender:null,grade:null,main_interest:null,ai_opinion:null,ai_knowledge:null,ai_usage:null,job_replacement:null,learning_help:null,society_risk:null,schools_should_teach:null};
+const CHECK='<svg class="chk" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const $=s=>document.querySelector(s);
+let submissionId = crypto.randomUUID();   // un id por envío: evita duplicados por doble clic
+let sending = false;
+
+Object.keys(OPTIONS).forEach(key=>{
+  const box=$(`[data-f=${key}] .group`);
+  OPTIONS[key].forEach(([val,text])=>{
+    const b=document.createElement('button');
+    b.type='button';b.className='opt';b.dataset.v=val;b.setAttribute('role','radio');b.setAttribute('aria-checked','false');
+    b.innerHTML=text+CHECK;
+    b.onclick=()=>{
+      const on=b.getAttribute('aria-checked')==='true';
+      box.querySelectorAll('.opt').forEach(o=>o.setAttribute('aria-checked','false'));
+      if(on&&key==='gender'){state[key]=null}else{b.setAttribute('aria-checked','true');state[key]=val}
+      box.closest('.field').classList.remove('bad');
+    };
+    box.appendChild(b);
+  });
+});
+$('#alias').oninput=e=>{state.alias=e.target.value;e.target.closest('.field').classList.remove('bad')};
+$('#age').oninput=e=>{state.age=e.target.value;e.target.closest('.field').classList.remove('bad')};
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));const m=document.querySelector('#'+id+' main');if(m)m.scrollTop=0}
+
+function check(keys){
+  const age=Number(state.age);
+  const rules={
+    alias:()=>state.alias.trim().length<1||state.alias.trim().length>40,
+    age:()=>state.age===''||!Number.isInteger(age)||age<12||age>18
+  };
+  let first=null;
+  keys.forEach(k=>{
+    const bad = rules[k] ? rules[k]() : state[k]===null;
+    const f=$(`[data-f=${k}]`); f.classList.toggle('bad',bad);
+    if(bad&&!first)first=f;
+  });
+  if(first)first.scrollIntoView({behavior:'smooth',block:'center'});
+  return !first;
+}
+$('#to2').onclick=()=>{ if(check(['alias','age','grade','main_interest','ai_opinion'])) show('s2') };
+$('#back2').onclick=()=>show('s1');
+
+function resetAll(){
+  Object.keys(state).forEach(k=>state[k]=(k==='alias'||k==='age')?'':null);
+  $('#alias').value='';$('#age').value='';
+  document.querySelectorAll('.opt').forEach(o=>o.setAttribute('aria-checked','false'));
+  document.querySelectorAll('.field.bad').forEach(f=>f.classList.remove('bad'));
+  submissionId=crypto.randomUUID(); show('s1');
+}
+$('#again').onclick=resetAll; $('#again2').onclick=resetAll;
+
+async function send(){
+  if(sending)return;
+  if(!check(['ai_knowledge','ai_usage','job_replacement','learning_help','society_risk','schools_should_teach']))return;
+  sending=true;
+  const btn=$('#send'), msg=$('#msg');
+  btn.disabled=true; btn.textContent='Enviando…'; msg.style.display='none';
+  const row={
+    submission_id:submissionId, alias:state.alias.trim(), age:Number(state.age), gender:state.gender,
+    grade:state.grade, main_interest:state.main_interest, ai_opinion:state.ai_opinion,
+    ai_knowledge:state.ai_knowledge, ai_usage:state.ai_usage, job_replacement:state.job_replacement,
+    learning_help:state.learning_help, society_risk:state.society_risk, schools_should_teach:state.schools_should_teach
+  };
+  try{
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/survey_responses`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'},
+      body:JSON.stringify(row)
+    });
+    // 201 = guardado. 409 = este mismo envío ya estaba guardado (reintento): también es éxito.
+    if(r.status===201||r.status===409){
+      $('#thanks').textContent=`¡Gracias, ${row.alias}!`; show('s3');
+    }else{
+      const t=await r.text(); console.error('Supabase',r.status,t);
+      throw new Error('http '+r.status);
+    }
+  }catch(e){
+    msg.textContent='No se pudieron guardar tus respuestas. Revisa tu conexión e inténtalo de nuevo.';
+    msg.style.display='block';
+  }finally{
+    sending=false; btn.disabled=false; btn.textContent='Enviar respuestas';
+  }
+}
+$('#send').onclick=send;
+</script>
+</body>
+</html>
